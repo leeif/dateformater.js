@@ -1,0 +1,21 @@
+{
+  "name": "dateformater",
+  "version": "0.0.1",
+  "description": "date format tool for both solar date and Chinese lunar date",
+  "main": "dateformater.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node ./test/test.js"
+  },
+  "keywords": [
+    "date",
+    "format",
+    "lunar"
+  ],
+  "author": {
+    "name" : "leeif",
+    "email" : "geeklyf@hotmail.com"
+  }
+}
