@@ -1,105 +1,315 @@
 var lunar = require('./lib/lunar');
 
-var day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+var smallDay = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-var matcher = {
+var bigDay = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
+              'Thursday', 'Friday', 'Saturday'];
+
+var smallMonth = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dev'];
+
+var bigMonth = ['January', 'February', 'March', 'April', 'May', 'June', 
+                'July', 'August', 'September', 'October', 'November', 'December'];
+
+var timeMark = ['a.m.', 'p.m.'];
+
+var bigTimeMark = ['AM', 'PM'];
+
+var matcher = [
   
   //YY
-  //return short year : 2015=>15
-  '\\bY{2}\\b' : function(date) {
-  	var year = date.getFullYear() + '';
-  	return year.slice(year.length-2, year.length);
+  {
+    reg : regStrGenerator('Y', 2),
+    replacer : function(date) {
+      var year = date.getFullYear() + '';
+      return '$1' + year.slice(year.length-2, year.length);
+    }
   },
 
   //YYYY
-  //return long year : 2015
-  '\\bY{4}\\b' : function(date) {
-    return date.getFullYear();
+  {
+    reg : regStrGenerator('Y', 4),
+    replacer : function(date) {
+      var year = date.getFullYear();
+      return '$1' + year;
+    }
+  },
+
+  //MMMM
+  {
+    reg : regStrGenerator('M', 4),
+    replacer : function(date) {
+      var month = bigMonth[date.getMonth()];
+      return '$1' + month;
+    }
+  },
+
+  //MMM
+  {
+    reg : regStrGenerator('M', 3),
+    replacer : function(date) {
+      var month = smallMonth[date.getMonth()];
+      return '$1' + month;
+    }
   },
 
   //MM
-  //return big month : 01
-  '\\bM{2}\\b' : function(date) {
-  	return convert2BigMonth(date.getMonth()+1);
+  {
+    reg : regStrGenerator('M', 2),
+    replacer : function(date) {
+      var month = convert2Big(date.getMonth()+1);
+      return '$1' + month;
+    }
   },
-  
+
   //M
-  //return small month : 1
-  '\\bM{1}\\b' : function(date) {
-    return date.getMonth()+1;
+  {
+    reg : regStrGenerator('M', 1),
+    replacer : function(date) {
+      var month = date.getMonth()+1;
+      return '$1' + month;
+    }
   },
 
-  '\\bd{3}\\b' : function(date) {
-  	var i = date.getDay();
-  	return day[i];
+  //DD
+  {
+    reg : regStrGenerator('D', 2),
+    replacer : function(date) {
+      var day = date.getDate();
+      return '$1' + convert2Big(day);
+    }
+  },
+
+  //D
+  {
+    reg : regStrGenerator('D', 1),
+    replacer : function(date) {
+      var day = date.getDate();
+      return '$1' + day;
+    }
+  },
+
+  //ddd
+  {
+    reg : regStrGenerator('d', 3),
+    replacer : function(date) {
+      var day = date.getDay();
+      return '$1' + bigDay[day];
+    }
+  },
+
+  //dd
+  {
+    reg : regStrGenerator('d', 2),
+    replacer : function(date) {
+      var day = date.getDay();
+      return '$1' + smallDay[day];
+    }
+  }
+];
+
+var lunarMatcher = [
+
+  //YYY
+  {
+    reg : regStrGenerator('Y', 3),
+    replacer : function(date) {
+      var year = date.lunarDate.gzYear; 
+      return '$1' + year;
+    }
+  },
+
+  //YY
+  {
+    reg : regStrGenerator('Y', 2),
+    replacer : function(date) {
+      var year = date.lunarDate.lYear;
+      return '$1' + year;
+    }
   },
   
+  //Y
+  {
+    reg : regStrGenerator('Y', 1),
+    replacer : function(date) {
+      var year = date.lunarDate.lYear + ''; 
+      return '$1' + year.slice(year.length-2, year.length);
+    }
+  },
+
+  //MMM
+  {
+    reg : regStrGenerator('M', 3),
+    replacer : function(date) {
+      var month = date.lunarDate.IMonthCn;
+      return '$1' + month;
+    }
+  },
+
+  //MM
+  {
+    reg : regStrGenerator('M', 2),
+    replacer : function(date) {
+      var month = date.lunarDate.lMonth;
+      return '$1' + convert2Big(month);
+    }
+  },
+
+  //M
+  {
+    reg : regStrGenerator('M', 1),
+    replacer : function(date) {
+      var month = date.lunarDate.lMonth;
+      return '$1' + month;
+    }
+  },
+
+  //DDD
+  {
+    reg : regStrGenerator('D', 3),
+    replacer : function(date) {
+      var day = date.lunarDate.IDayCn;
+      return '$1' + day;
+    }
+  },
+
   //DD
-  //return date of the month (1~31)
-  'D{2}' : function(date) {
-    return date.getDate();
+  {
+    reg : regStrGenerator('D', 2),
+    replacer : function(date) {
+      var day = date.lunarDate.lDay;
+      return '$1' + convert2Big(day);
+    }
   },
-  'H{2}' : function(date) {
-  	return date.getHours();
-  },
-  'm{2}' : function(date) {
-  	return date.getMinutes();
-  },
-  's{2}' : function(date) {
-    return date.getSeconds();
+
+  //D
+  {
+    reg : regStrGenerator('D', 1),
+    replacer : function(date) {
+      var day = date.lunarDate.lDay;
+      return '$1' + day;
+    }
   }
-};
+];
 
-var lunarMatcher = {
-	
-  '\\bY{2}\\b' : function(date) {
-    return date.lunarDate.lYear;
+var timeMatcher = [
+
+  //HHH
+  {
+    reg : regStrGenerator('H', 3),
+    replacer : function(date) {
+      var hour = convert2Big(date.getHours());
+      return '$1' + hour;
+    }
   },
 
-  '\\bY{1}\\b' : function(date) {
-    return date.lunarDate.gzYear;
+  //HH
+  {
+    reg : regStrGenerator('H', 2),
+    replacer : function(date) {
+      var hour = date.getHours();
+      return '$1' + hour;
+    } 
   },
 
-  '\\bM{2}\\b' : function(date) {
-    return date.lunarDate.lmonth;
-  }, 
-
-  '\\bM{1}\\b' : function(date) {
-    return date.lunarDate.IMonthCn;
-  }, 
-
-  '\\bD{2}\\b' : function(date) {
-    return date.lunarDate.lDay;
-  }, 
-
-  '\\bD{1}\\b' : function(date) {
-    return date.lunarDate.IDayCn;
-  }, 
-
-  'H{2}' : function(date) {
-    return date.getHours();
+  //hhh
+  {
+    reg : regStrGenerator('h', 3),
+    replacer : function(date) {
+      var hour;
+      if(date.getHours() > 12) {
+        hour = date.getHours() - 12;
+      } else {
+        hour = date.getHours();
+      }
+      return '$1' + convert2Big(hour);
+    }
   },
 
-  'm{2}' : function(date) {
-    return date.getMinutes();
-   },
+  //hh
+  {
+    reg : regStrGenerator('h', 2),
+    replacer : function(date) {
+      var hour;
+      if(date.getHours() > 12) {
+        hour = date.getHours() -12;
+      } else {
+        hour = date.getHours();
+      }
+      return '$1' + hour;
+    }
+  },
 
-  's{2}' : function(date) {
-    return date.getSeconds();
+  //mmm
+  {
+    reg : regStrGenerator('m', 3),
+    replacer : function(date) {
+      var minutes = convert2Big(date.getMinutes());
+      return '$1' + minutes;
+    }
+  },
+
+  //mm
+  {
+    reg : regStrGenerator('m', 2),
+    replacer : function(date) {
+      var minutes = date.getMinutes();
+      return '$1' + minutes;
+    }
+  },
+
+  //sss
+  {
+    reg : regStrGenerator('s', 3),
+    replacer : function(date) {
+      var second = convert2Big(date.getSeconds());
+      return '$1' + second;
+    }
+  },
+
+  //ss
+  {
+    reg : regStrGenerator('s', 2),
+    replacer : function(date) {
+      var second = date.getSeconds();
+      return '$1' + second;
+    }
+  },
+
+  //A
+  {
+    reg : regStrGenerator('A'),
+    replacer : function(date) {
+      var flag = timeMark[parseInt(date.getHours()/12)];
+      return '$1' + flag;
+    }
+  },
+
+  //P
+  {
+    reg : regStrGenerator('P'),
+    replacer : function(date) {
+      var flag = bigTimeMark[parseInt(date.getHours()/12)];
+      return '$1' + flag;
+    }
   }
-
-};
-
-
+];
 
 /**
  * format the date to the UTC Time
  * @return {[string]} [string of the format time]
  */
-function solarFormat(date, formatStr){
-  var result = formatStr || 'YYYY-MM-DD ddd HH:mm:ss';
-  for(var m in matcher) {
-  	result = result.replace(new RegExp(m), matcher[m](date));
+function format(date, formatStr){
+  var i;
+  var m;
+  var result = formatStr || 'YYYY-MM-DD ddd HHH:mmm:sss';
+  for(i in matcher) {
+    m = matcher[i];
+    result = result.replace(new RegExp(m.reg, 'g'), m.replacer(date));
+  }
+  for(i in timeMatcher) {
+    m = timeMatcher[i];
+    result = result.replace(new RegExp(m.reg, 'g'), m.replacer(date));
   }
   return result;
 }
@@ -109,20 +319,52 @@ function solarFormat(date, formatStr){
  * @return {[string]} [string of the format time]
  */
 function lunarFormat(date, formatStr){
+  var m;
+  var i;
   var lunarDate = lunar.solar2lunar(date.getFullYear(), date.getMonth()+1, date.getDate());
   date.lunarDate = lunarDate;
-  var result = formatStr || 'Y M D HH:mm:ss';
-  for(var m in lunarMatcher) {
-  	result = result.replace(new RegExp(m), lunarMatcher[m](date));
+  var result = formatStr || 'YYY MMM DDD HHH:mmm:sss';
+  for(i in lunarMatcher) {
+    m = lunarMatcher[i];
+  	result = result.replace(new RegExp(m.reg, 'g'), m.replacer(date));
+  }
+  for(i in timeMatcher) {
+    m = timeMatcher[i];
+    result = result.replace(new RegExp(m.reg, 'g'), m.replacer(date));
   }
   return result;
 }
 
-//change the month to the big month : 1 => 01
-function convert2BigMonth(month){
+/**
+ * generate the RegExp string
+ * like ([^key]|^)key{count}(?!key)
+ * @param  {[string]} key
+ * @param  {[int]} count 
+ * @return {[string]}
+ */
+function regStrGenerator(key, count){
+  var reg;
+  if(count) {
+    reg = '([^' + key + ']|^)' + 
+                  key + '{' + count + '}(?!' + 
+                  key + ')';
+  } else {
+    reg = '([^' + key + ']|^)' + 
+                  key + '(?!' + 
+                  key + ')';
+  }
+  return reg;
+}
+
+/**
+ * change the date info to the big month : 1 => 01,
+ * @param  {[int]} month
+ * @return {[string]}
+ */
+function convert2Big(info) {
  var tmp;
- if(typeof month !== 'string'){
-  tmp = month + '';
+ if(typeof info !== 'string'){
+  tmp = info + '';
  }
  if(tmp.length === 1) {
  	return '0' + tmp;
@@ -133,5 +375,5 @@ function convert2BigMonth(month){
  }
 }
 
-exports.solarFormat = solarFormat;
+exports.format = format;
 exports.lunarFormat = lunarFormat;

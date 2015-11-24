@@ -1,6 +1,6 @@
 {
   "name": "dateformater",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "date format tool for both solar date and Chinese lunar date",
   "main": "dateformater.js",
   "directories": {
@@ -14,6 +14,10 @@
     "format",
     "lunar"
   ],
+  "repository": {
+    "type" : "git",
+    "url" : "git@github.com:leeif/dateformater.git"
+  },
   "author": {
     "name" : "leeif",
     "email" : "geeklyf@hotmail.com"
