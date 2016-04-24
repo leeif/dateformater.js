@@ -303,6 +303,9 @@ function format(date, formatStr){
   var i;
   var m;
   var result = formatStr || 'YYYY-MM-DD ddd HHH:mmm:sss';
+  if(typeof date !== Date){
+    date = new Date(date);
+  }
   for(i in matcher) {
     m = matcher[i];
     result = result.replace(new RegExp(m.reg, 'g'), m.replacer(date));
@@ -324,6 +327,9 @@ function lunarFormat(date, formatStr){
   var lunarDate = lunar.solar2lunar(date.getFullYear(), date.getMonth()+1, date.getDate());
   date.lunarDate = lunarDate;
   var result = formatStr || 'YYY MMM DDD HHH:mmm:sss';
+  if(typeof date !== Date){
+    date = new Date(date);
+  }
   for(i in lunarMatcher) {
     m = lunarMatcher[i];
   	result = result.replace(new RegExp(m.reg, 'g'), m.replacer(date));
