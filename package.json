@@ -1,6 +1,6 @@
 {
   "name": "dateformater",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "date format tool for both solar date and Chinese lunar date",
   "main": "dateformater.js",
   "directories": {

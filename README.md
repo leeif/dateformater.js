@@ -1,7 +1,12 @@
-# dateformater
+dateformater
+=====
 Node.js module to format date , support Chinese Lunar date
-#Installation
-####Install dateformater in your project  
+
+Installation
+====
+Install dateformater in your project
+----
+
 * npm install
 
         npm install dateformater  
@@ -9,8 +14,9 @@ Node.js module to format date , support Chinese Lunar date
 
         var dateformater = require('dateformater');
 
-#Format pattern
->####solar date
+Format pattern
+===
+>solar date
 
 * YYYY = long year(2015)  
 
@@ -32,7 +38,7 @@ Node.js module to format date , support Chinese Lunar date
 
 * dd = short day in week in words(Sat)
 
->####lunar date  
+>lunar date  
 
 * YYY = lunar year in Chinese(庚辰年)
 
@@ -52,7 +58,7 @@ Node.js module to format date , support Chinese Lunar date
 
 * D = lunar number short day(1)
 
->####time
+>time
 
 * HHH = hours(00~24)
 
@@ -72,7 +78,8 @@ Node.js module to format date , support Chinese Lunar date
 
 
 
-#Usage
+Usage
+======
 
     var dateformater = require('dateformater');
     var date = new Date();
@@ -86,7 +93,8 @@ Node.js module to format date , support Chinese Lunar date
       date.setSeconds(4);	
     }(date));
   
-###format
+format
+----
 
 * default
 
@@ -97,7 +105,8 @@ Node.js module to format date , support Chinese Lunar date
 
         dateformater.format(date, 'YY-M-D dd hh:mm:ss')//output=>'00-2-5 Sat 2:3:4'  
 
-###lunarFormat
+lunarFormat
+-----
 
 * default
 
@@ -108,6 +117,7 @@ Node.js module to format date , support Chinese Lunar date
 
         dateformater.lunarFormat(date, 'YY-MM-DD')//2000-01-01
 
-#Test
+Test
+=====
     npm test
 #Welcome to improve my project
